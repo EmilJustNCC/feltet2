@@ -1,0 +1,212 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.game-container {
+    text-align: center;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.game-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 columns */
+    gap: 15px; /* Gap between squares */
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.field {
+    width: 120px;
+    height: 120px;
+    background-color: #0D47A1; /* Dark Blue */
+    color: #FFFFFF; /* White */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+.field:hover {
+    background-color: #1565C0; /* Slightly lighter dark blue on hover */
+}
+
+.field.highlight {
+    background-color: #FFEB3B; /* Yellow highlight */
+    color: #212121; /* Dark text for contrast */
+    transform: scale(1.05);
+}
+
+.buttons-container {
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 1em;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+button#activate-button {
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+button#activate-button:hover {
+    background-color: #388E3C; /* Darker green */
+}
+
+button#thank-you-button {
+    background-color: #FF9800; /* Orange */
+    color: white;
+}
+
+button#thank-you-button:hover {
+    background-color: #F57C00; /* Darker orange */
+}
+
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 40px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more responsive */
+    max-width: 300px;
+    text-align: center;
+    font-size: 2em;
+    border-radius: 8px;
+}
+
+.modal-content strong {
+    font-size: 1.5em; /* Make "SELV TAK" even larger */
+}
+
+/* Specific style for the gambler modal content if needed */
+#gambler-modal .modal-content {
+    font-size: 1.5em; /* Adjust font size for gambler action text */
+}
+
+/* Styles for Bonus and Gambler fields */
+.field.bonus {
+    background-color: #8BC34A; /* Light Green */
+}
+
+.field.gambler {
+    background-color: #E57373; /* Light Red */
+}
+
+
+/* Scoreboard Styles */
+.scoreboard {
+    margin-top: 30px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.scoreboard h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+#scores div {
+    margin-bottom: 5px;
+    font-size: 1.1em;
+}
+
+#scores strong {
+    margin-right: 10px;
+}
+
+/* Point Adjustments Styles */
+.point-adjustments {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.point-adjustments h2 {
+    margin-top: 0;
+    color: #333;
+}
+
+.player-select {
+    margin-bottom: 15px;
+}
+
+.player-select label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.adjustment-buttons button {
+    padding: 8px 12px;
+    margin: 2px;
+    font-size: 0.9em;
+    background-color: #03A9F4; /* Light Blue */
+    color: white;
+}
+
+.adjustment-buttons button:hover {
+    background-color: #0288D1; /* Darker Light Blue */
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .game-grid {
+        grid-template-columns: repeat(5, 1fr); /* 5 columns */
+        gap: 10px; /* Gap between squares */
+    }
+
+    .field {
+        width: 100%; /* Make fields fill the grid cell */
+        height: 100px;
+        font-size: 1em;
+    }
+
+    button {
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+
+    .modal-content {
+        width: 90%;
+        padding: 20px;
+        font-size: 1.5em;
+    }
+}
