@@ -233,33 +233,28 @@ button#thank-you-button:hover {
 
 /* Responsive adjustments */
 /* Responsive adjustments */
-:start_line:236
--------
-:start_line:238
--------
 @media (min-width: 768px) { /* Apply side-by-side layout on larger screens */
     .main-layout-container {
-        flex-direction: column; /* Arrange elements in a column */
-        align-items: center; /* Center items horizontally */
+        display: flex;
+        flex-direction: row; /* Arrange elements side by side */
+        align-items: flex-start; /* Align items to the top */
         width: 100%; /* Ensure container takes full width */
-        padding: 0 20px; /* Add horizontal padding to the container */
+        max-width: 1200px; /* Max width for the entire layout */
+        gap: 20px; /* Gap between game area and sidebar */
         box-sizing: border-box; /* Include padding in calculations */
     }
 
     .game-area {
-        width: 100%; /* Take full width when stacked */
-        max-width: 600px; /* Keep max width for content centering */
+        width: 60%; /* Allocate space for game area */
         flex-shrink: 0; /* Prevent game area from shrinking */
-        margin-right: 0; /* Remove right margin when stacked */
-        margin-bottom: 20px; /* Add space below game area */
+        margin-right: 20px; /* Add space between game area and sidebar */
         display: flex; /* Ensure game area is a flex container */
         justify-content: center; /* Center the game container within the game area */
         box-sizing: border-box; /* Include padding in calculations */
     }
 
     .sidebar-area {
-        width: 100%; /* Take full width when stacked */
-        max-width: 600px; /* Align with game area max width */
+        width: 40%; /* Allocate space for sidebar */
         flex-shrink: 0; /* Prevent sidebar from shrinking */
         display: flex; /* Ensure sidebar is a flex container */
         flex-direction: column; /* Stack sidebar items vertically */
@@ -295,21 +290,26 @@ button#thank-you-button:hover {
 
     .field {
         width: 100%; /* Make fields fill the grid cell */
-        padding-bottom: 100%; /* Maintain square aspect ratio */
-        height: 0;
+        /* Removed padding-bottom and height 0 */
         font-size: 0.7em; /* Smaller font size */
         box-sizing: border-box;
+        /* Ensure content is centered using flexbox */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* Add a minimum height to ensure visibility */
+        min-height: 50px; /* Adjust as needed */
+        text-align: center; /* Ensure text is centered within the field */
     }
 
     .field span {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center; /* Ensure text is centered */
+        /* Removed absolute positioning */
+        /* Relying on parent flexbox for centering */
+        display: block; /* Ensure span behaves as a block element for wrapping */
         width: 100%; /* Allow span to take full width for centering */
         padding: 0 2px; /* Add slight horizontal padding to prevent text touching edges */
         box-sizing: border-box;
+        word-wrap: break-word; /* Ensure long words break and wrap */
     }
 
 
