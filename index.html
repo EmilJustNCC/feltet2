@@ -7,72 +7,126 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="game-container">
-        <h1>Interactive Game</h1>
-        <p>Click "Aktiver gulvet" to start the randomizer!</p>
-        <div class="game-grid">
-            <div class="field" data-field-index="0"></div>
-            <div class="field" data-field-index="1"></div>
-            <div class="field" data-field-index="2"></div>
-            <div class="field" data-field-index="3"></div>
-            <div class="field" data-field-index="4"></div>
-            <div class="field" data-field-index="5"></div>
-            <div class="field" data-field-index="6"></div>
-            <div class="field" data-field-index="7"></div>
-            <div class="field" data-field-index="8"></div>
-            <div class="field" data-field-index="9"></div>
-            <div class="field" data-field-index="10"></div>
-            <div class="field" data-field-index="11"></div>
-            <div class="field" data-field-index="12"></div>
-            <div class="field" data-field-index="13"></div>
-            <div class="field" data-field-index="14"></div>
-            <div class="field" data-field-index="15"></div>
-            <div class="field" data-field-index="16"></div>
-            <div class="field" data-field-index="17"></div>
-            <div class="field" data-field-index="18"></div>
-            <div class="field" data-field-index="19"></div>
-            <div class="field" data-field-index="20"></div>
-            <div class="field" data-field-index="21"></div>
-            <div class="field" data-field-index="22"></div>
-            <div class="field" data-field-index="23"></div>
-            <div class="field" data-field-index="24"></div>
+    <div class="main-layout-container">
+        <div class="game-area">
+            <div class="game-container">
+                <h1>Interactive Game</h1>
+                <p>Click "Aktiver gulvet" to start the randomizer!</p>
+                <div class="game-grid">
+                    <div class="field" data-field-index="0"></div>
+                    <div class="field" data-field-index="1"></div>
+                    <div class="field" data-field-index="2"></div>
+                    <div class="field" data-field-index="3"></div>
+                    <div class="field" data-field-index="4"></div>
+                    <div class="field" data-field-index="5"></div>
+                    <div class="field" data-field-index="6"></div>
+                    <div class="field" data-field-index="7"></div>
+                    <div class="field" data-field-index="8"></div>
+                    <div class="field" data-field-index="9"></div>
+                    <div class="field" data-field-index="10"></div>
+                    <div class="field" data-field-index="11"></div>
+                    <div class="field" data-field-index="12"></div>
+                    <div class="field" data-field-index="13"></div>
+                    <div class="field" data-field-index="14"></div>
+                    <div class="field" data-field-index="15"></div>
+                    <div class="field" data-field-index="16"></div>
+                    <div class="field" data-field-index="17"></div>
+                    <div class="field" data-field-index="18"></div>
+                    <div class="field" data-field-index="19"></div>
+                    <div class="field" data-field-index="20"></div>
+                    <div class="field" data-field-index="21"></div>
+                    <div class="field" data-field-index="22"></div>
+                    <div class="field" data-field-index="23"></div>
+                    <div class="field" data-field-index="24"></div>
+                    <div class="field" data-field-index="25"></div>
+                    <div class="field" data-field-index="26"></div>
+                    <div class="field" data-field-index="27"></div>
+                    <div class="field" data-field-index="28"></div>
+                    <div class="field" data-field-index="29"></div>
+                    <div class="field" data-field-index="30"></div>
+                    <div class="field" data-field-index="31"></div>
+                    <div class="field" data-field-index="32"></div>
+                    <div class="field" data-field-index="33"></div>
+                    <div class="field" data-field-index="34"></div>
+                    <div class="field" data-field-index="35"></div>
+                </div>
+                <div class="buttons-container">
+                    <button id="activate-button">Aktiver gulvet</button>
+                    <button id="thank-you-button">Tak Lise Rønne</button>
+                </div>
+            </div>
         </div>
-        <div class="buttons-container">
-            <button id="activate-button">Aktiver gulvet</button>
-            <button id="thank-you-button">Tak Lise Rønne</button>
+        <div class="sidebar-area">
+            <div class="scoreboard">
+                <h2>Scoreboard</h2>
+                <div id="scores">
+                    <!-- Scores will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="point-adjustments">
+                <h2>Adjust Points</h2>
+                <div class="player-select">
+                    <label for="player-select">Select Player:</label>
+                    <select id="player-select">
+                        <!-- Player options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div class="adjustment-buttons">
+                    <button data-points="-5">-5</button>
+                    <button data-points="-1">-1</button>
+                    <button data-points="1">+1</button>
+                    <button data-points="5">+5</button>
+                </div>
+            </div>
+            <div class="rules-container">
+                <button id="rules-button">Spilleregler</button>
+                <div id="rules-content" class="rules-dropdown">
+                    <h3>Spilleregler</h3>
+                    <p>Grundlæggende spilletræk</p>
+                    <p>Når du lander på et felt, skal du vælge enten:</p>
+                    <ul>
+                        <li>En modspiller til udfordring</li>
+                        <li>Et nabofelt til dit eget</li>
+                    </ul>
+                    <p>Almindelig udfordring</p>
+                    <p>- 5 spørgsmål fra kortet, flest rigtige vinder:</p>
+                    <ul>
+                        <li>Vinder får 5 point, taber får 0 point</li>
+                        <li>I kan selv vælge: Bedst af 5 spørgsmål ELLER direkte duel i 2 kategorier (vælger en hver) om 10 points, men taberen får -5. Fortsættes indtil en svarer rigtigt og den anden forkert.</li>
+                    </ul>
+                    <p>Bonus felt - Vælg en af disse:</p>
+                    <ol>
+                        <li>Pointstung: 5 spørgsmål hvor rigtigt svar = +1 point, forkert svar = -1 point</li>
+                        <li>Du fik ikk' 9 i musik?: 1 musikspørgsmål hvor rigtigt svar = +3 point, forkert svar = -4 point</li>
+                    </ol>
+                    <p>Gambler felt - Tilfældig mulighed:</p>
+                    <p>Dice roll:</p>
+                    <ul>
+                        <li>Slå terning: 2 eller 4 = få points svarende til øjnene</li>
+                        <li>1, 3 eller 5 = mist points svarende til øjnene</li>
+                        <li>6 = svar på spørgsmål for enten +6 point eller 0</li>
+                    </ul>
+                    <p>Roll the dice fatty</p>
+                    <p>Slå terning, spil derefter sten-saks-papir om det antal points, eller et andet valgfrit tomands-spil</p>
+                    <p>Death round - Variant 1</p>
+                    <ul>
+                        <li>Vælg et spørgsmål du tror modstanderen IKKE kan svare på</li>
+                        <li>Hvis de svarer rigtigt: De får +10, du får -10</li>
+                        <li>Hvis de svarer forkert: Du får 2 points</li>
+                    </ul>
+                    <p>Death round - Variant 3</p>
+                    <ul>
+                        <li>Vælg en spiller du tror KAN svare rigtigt</li>
+                        <li>Svarer rigtigt: I får begge +5 point</li>
+                        <li>Svarer forkert: I får begge -5 point</li>
+                    </ul>
+                    <p>MÅLET: Først til flest points vinder!</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="scoreboard">
-        <h2>Scoreboard</h2>
-        <div id="scores">
-            <!-- Scores will be populated by JavaScript -->
-        </div>
-    </div>
 
-    <div class="point-adjustments">
-        <h2>Adjust Points</h2>
-        <div class="player-select">
-            <label for="player-select">Select Player:</label>
-            <select id="player-select">
-                <!-- Options populated by JavaScript -->
-            </select>
-        </div>
-        <div class="adjustment-buttons">
-            <button data-points="-5">-5</button>
-            <button data-points="-4">-4</button>
-            <button data-points="-3">-3</button>
-            <button data-points="-2">-2</button>
-            <button data-points="-1">-1</button>
-            <button data-points="1">+1</button>
-            <button data-points="2">+2</button>
-            <button data-points="3">+3</button>
-            <button data-points="4">+4</button>
-            <button data-points="5">+5</button>
-        </div>
-    </div>
-
-    </div>
 
     <div id="thank-you-modal" class="modal">
         <div class="modal-content">

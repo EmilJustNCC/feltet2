@@ -2,23 +2,57 @@ body {
     font-family: sans-serif;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Align items to the start to prevent vertical overflow issues */
     min-height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    padding: 10px; /* Adjusted padding */
+    box-sizing: border-box; /* Include padding in the element's total width and height */
+    width: 100%; /* Ensure body takes full width */
 }
+
+.main-layout-container {
+    display: flex;
+    flex-direction: column; /* Stack elements by default on small screens */
+    align-items: center;
+    width: 100%;
+    max-width: 1200px; /* Max width for the entire layout */
+    gap: 20px; /* Gap between game area and sidebar */
+    box-sizing: border-box; /* Include padding in calculations */
+    flex-wrap: wrap; /* Allow wrapping if needed */
+}
+
+.game-area {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box; /* Include padding in calculations */
+}
+
+.sidebar-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Gap between scoreboard, adjustments, and rules */
+    box-sizing: border-box; /* Include padding in calculations */
+}
+
 
 .game-container {
     text-align: center;
-    padding: 20px;
+    padding: 15px; /* Adjusted padding */
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Allow container to take full width */
+    max-width: 600px; /* Max width for the game grid itself */
+    box-sizing: border-box; /* Include padding in the element's total width and height */
 }
 
 .game-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 5 columns */
+    grid-template-columns: repeat(6, 1fr); /* 6 columns */
     gap: 15px; /* Gap between squares */
     margin-top: 20px;
     margin-bottom: 20px;
@@ -126,14 +160,20 @@ button#thank-you-button:hover {
     background-color: #E57373; /* Light Red */
 }
 
+.field.name {
+    background-color: #0D47A1; /* Dark Blue */
+    /* Add any other specific styles for name squares if needed, e.g., border, padding */
+}
+
 
 /* Scoreboard Styles */
 .scoreboard {
-    margin-top: 30px;
     padding: 15px;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;
+    width: 100%; /* Take full width of sidebar */
+    box-sizing: border-box;
 }
 
 .scoreboard h2 {
@@ -150,13 +190,18 @@ button#thank-you-button:hover {
     margin-right: 10px;
 }
 
+.negative-score {
+    color: red;
+}
+
 /* Point Adjustments Styles */
 .point-adjustments {
-    margin-top: 20px;
     padding: 15px;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;
+    width: 100%; /* Take full width of sidebar */
+    box-sizing: border-box;
 }
 
 .point-adjustments h2 {
@@ -187,26 +232,167 @@ button#thank-you-button:hover {
 
 
 /* Responsive adjustments */
-@media (max-width: 600px) {
+/* Responsive adjustments */
+:start_line:236
+-------
+:start_line:238
+-------
+@media (min-width: 768px) { /* Apply side-by-side layout on larger screens */
+    .main-layout-container {
+        flex-direction: column; /* Arrange elements in a column */
+        align-items: center; /* Center items horizontally */
+        width: 100%; /* Ensure container takes full width */
+        padding: 0 20px; /* Add horizontal padding to the container */
+        box-sizing: border-box; /* Include padding in calculations */
+    }
+
+    .game-area {
+        width: 100%; /* Take full width when stacked */
+        max-width: 600px; /* Keep max width for content centering */
+        flex-shrink: 0; /* Prevent game area from shrinking */
+        margin-right: 0; /* Remove right margin when stacked */
+        margin-bottom: 20px; /* Add space below game area */
+        display: flex; /* Ensure game area is a flex container */
+        justify-content: center; /* Center the game container within the game area */
+        box-sizing: border-box; /* Include padding in calculations */
+    }
+
+    .sidebar-area {
+        width: 100%; /* Take full width when stacked */
+        max-width: 600px; /* Align with game area max width */
+        flex-shrink: 0; /* Prevent sidebar from shrinking */
+        display: flex; /* Ensure sidebar is a flex container */
+        flex-direction: column; /* Stack sidebar items vertically */
+        gap: 20px; /* Gap between sidebar items */
+        box-sizing: border-box; /* Include padding in calculations */
+    }
+}
+
+
+@media (max-width: 767px) { /* Styles for smaller screens (e.g., iPhones) */
+    body {
+        padding: 10px; /* Consistent padding */
+    }
+
+    .main-layout-container {
+        gap: 10px; /* Reduce gap between stacked sections on small screens */
+    }
+
+    .game-container {
+        padding: 10px; /* Adjusted padding for smaller screens */
+        width: 100%; /* Ensure game container takes full width */
+        margin: 0 auto; /* Center the game container */
+    }
+
+    .sidebar-area {
+        margin-top: 20px; /* Add space above sidebar content when stacked */
+    }
+
     .game-grid {
-        grid-template-columns: repeat(5, 1fr); /* 5 columns */
-        gap: 10px; /* Gap between squares */
+        grid-template-columns: repeat(6, 1fr); /* 6 columns for 6x6 grid */
+        gap: 5px; /* Smaller gap for smaller screens */
     }
 
     .field {
         width: 100%; /* Make fields fill the grid cell */
-        height: 100px;
-        font-size: 1em;
+        padding-bottom: 100%; /* Maintain square aspect ratio */
+        height: 0;
+        font-size: 0.7em; /* Smaller font size */
+        box-sizing: border-box;
     }
 
+    .field span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center; /* Ensure text is centered */
+        width: 100%; /* Allow span to take full width for centering */
+        padding: 0 2px; /* Add slight horizontal padding to prevent text touching edges */
+        box-sizing: border-box;
+    }
+
+
     button {
-        padding: 8px 15px;
-        font-size: 0.9em;
+        padding: 6px 10px; /* Smaller padding for buttons */
+        font-size: 0.8em; /* Smaller font size for buttons */
     }
 
     .modal-content {
-        width: 90%;
-        padding: 20px;
-        font-size: 1.5em;
+        width: 95%; /* Wider modal on smaller screens */
+        padding: 15px; /* Adjusted padding */
+        font-size: 1em; /* Smaller modal font size */
     }
+
+    #gambler-modal .modal-content {
+        font-size: 0.9em; /* Adjust font size for gambler action text */
+    }
+
+    .scoreboard h2, .point-adjustments h2, .rules-container h3 {
+        font-size: 1em; /* Smaller headings */
+    }
+
+    #scores div, .player-select label, .player-select select, .adjustment-buttons button, .rules-dropdown p, .rules-dropdown li {
+        font-size: 0.8em; /* Smaller text in scoreboard, adjustments, and rules */
+    }
+}
+
+/* Styles for the Rules Dropdown */
+.rules-container {
+    position: relative; /* Needed for dropdown positioning */
+    display: inline-block; /* Allows button to control dropdown width */
+    width: 100%; /* Take full width of sidebar */
+    box-sizing: border-box;
+}
+
+#rules-button {
+    background-color: #2196F3; /* Blue */
+    color: white;
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%; /* Button takes full width of container */
+    box-sizing: border-box;
+}
+
+#rules-button:hover {
+    background-color: #1976D2; /* Darker blue */
+}
+
+.rules-dropdown {
+    display: none; /* Hidden by default */
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 100%; /* Dropdown takes at least the width of the button */
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: left;
+    box-sizing: border-box;
+    left: 0; /* Align dropdown to the left edge of the container */
+    right: 0; /* Align dropdown to the right edge of the container */
+    /* Ensure dropdown is positioned relative to the rules-container */
+    top: 100%;
+}
+
+.rules-dropdown h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.1em;
+}
+
+.rules-dropdown p, .rules-dropdown ul {
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.rules-dropdown ul {
+    padding-left: 20px;
+}
+
+.rules-dropdown li {
+    margin-bottom: 5px;
 }

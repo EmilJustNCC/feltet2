@@ -36,7 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
         scoresDiv.innerHTML = ''; // Clear current scores
         for (const name in scores) {
             const scoreElement = document.createElement('div');
-            scoreElement.innerHTML = `<strong>${name}:</strong> ${scores[name]} points`;
+            const scoreValue = scores[name];
+            scoreElement.innerHTML = `<strong>${name}:</strong> ${scoreValue} points`;
+            if (scoreValue < 0) {
+                scoreElement.classList.add('negative-score');
+            } else {
+                scoreElement.classList.remove('negative-score'); // Ensure class is removed if score becomes non-negative
+            }
             scoresDiv.appendChild(scoreElement);
         }
     }
@@ -54,35 +60,114 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to distribute names, Bonus, and Gambler! randomly
     function distributeFields() {
-        let fieldContent = [];
+        const totalFields = 36; // 6x6 grid
+        const numNames = 20;
+        const numBonus = 8;
+        const numGambler = 8;
+
+        let gridContent = Array(totalFields).fill(null);
+        let availablePositions = Array.from({ length: totalFields }, (_, i) => i);
+
+        // Helper to get adjacent indices
+        function getAdjacentIndices(index) {
+            const row = Math.floor(index / 6);
+            const col = index % 6;
+            const adjacent = [];
+            if (row > 0) adjacent.push(index - 6); // Up
+            if (row < 5) adjacent.push(index + 6); // Down
+            if (col > 0) adjacent.push(index - 1); // Left
+            if (col < 5) adjacent.push(index + 1); // Right
+            return adjacent;
+        }
+
+        // Place names randomly
+        let nameList = [];
         names.forEach(name => {
-            fieldContent.push(name, name); // Each name appears twice (10 total)
+            // Distribute 20 names as evenly as possible (4 of each name)
+            for (let i = 0; i < 4; i++) {
+                nameList.push(name);
+            }
+        });
+        nameList = shuffleArray(nameList);
+
+        for (let i = 0; i < numNames; i++) {
+            const randomPosIndex = Math.floor(Math.random() * availablePositions.length);
+            const gridIndex = availablePositions.splice(randomPosIndex, 1)[0];
+            gridContent[gridIndex] = nameList[i];
+        }
+
+        // Place Bonus and Gambler adjacent to names where possible
+        let bonusToPlace = numBonus;
+        let gamblerToPlace = numGambler;
+        let positionsWithNames = Array.from({ length: totalFields }, (_, i) => i).filter(i => names.includes(gridContent[i]));
+
+        // Shuffle positions with names to randomize adjacency placement order
+        positionsWithNames = shuffleArray(positionsWithNames);
+
+        positionsWithNames.forEach(nameIndex => {
+            const adjacent = getAdjacentIndices(nameIndex);
+            const emptyAdjacent = adjacent.filter(adjIndex => gridContent[adjIndex] === null);
+
+            // Prioritize placing both Bonus and Gambler if possible
+            if (emptyAdjacent.length >= 2 && bonusToPlace > 0 && gamblerToPlace > 0) {
+                const shuffledEmptyAdjacent = shuffleArray(emptyAdjacent);
+                gridContent[shuffledEmptyAdjacent[0]] = "Bonus";
+                bonusToPlace--;
+                availablePositions = availablePositions.filter(pos => pos !== shuffledEmptyAdjacent[0]);
+
+                gridContent[shuffledEmptyAdjacent[1]] = "Gambler!";
+                gamblerToPlace--;
+                availablePositions = availablePositions.filter(pos => pos !== shuffledEmptyAdjacent[1]);
+
+            } else {
+                // If not enough empty adjacent for both, try placing one
+                if (emptyAdjacent.length >= 1) {
+                     const randomEmptyAdjacentIndex = emptyAdjacent[Math.floor(Math.random() * emptyAdjacent.length)];
+                    if (bonusToPlace > 0) {
+                        gridContent[randomEmptyAdjacentIndex] = "Bonus";
+                        bonusToPlace--;
+                        availablePositions = availablePositions.filter(pos => pos !== randomEmptyAdjacentIndex);
+                    } else if (gamblerToPlace > 0) {
+                        gridContent[randomEmptyAdjacentIndex] = "Gambler!";
+                        gamblerToPlace--;
+                        availablePositions = availablePositions.filter(pos => pos !== randomEmptyAdjacentIndex);
+                    }
+                }
+            }
         });
 
-        const totalFields = fields.length; // 25 fields
-        const blankFieldsCount = totalFields - fieldContent.length; // 25 - 10 = 15 blank fields
 
-        // Determine counts for Bonus and Gambler! (half of blank fields)
-        const bonusCount = Math.floor(blankFieldsCount / 2); // 7
-        const gamblerCount = blankFieldsCount - bonusCount; // 8
-
-        for (let i = 0; i < bonusCount; i++) {
-            fieldContent.push("Bonus");
+        // Fill remaining empty positions with leftover Bonus and Gambler
+        let remainingOtherContent = [];
+        for (let i = 0; i < bonusToPlace; i++) {
+            remainingOtherContent.push("Bonus");
         }
-        for (let i = 0; i < gamblerCount; i++) {
-            fieldContent.push("Gambler!");
+        for (let i = 0; i < gamblerToPlace; i++) {
+            remainingOtherContent.push("Gambler!");
         }
+        remainingOtherContent = shuffleArray(remainingOtherContent);
 
-        fieldContent = shuffleArray(fieldContent); // Shuffle the list
+        availablePositions = shuffleArray(availablePositions); // Shuffle remaining positions
 
+        availablePositions.forEach((pos, index) => {
+            if (index < remainingOtherContent.length) {
+                gridContent[pos] = remainingOtherContent[index];
+            }
+        });
+
+
+        // Update the actual fields
         fields.forEach((field, index) => {
-            field.textContent = fieldContent[index];
-            field.classList.remove('highlight', 'winner', 'bonus', 'gambler'); // Reset classes
+            const content = gridContent[index];
+            field.innerHTML = `<span>${content}</span>`; // Wrap content in span
+            field.classList.remove('highlight', 'winner', 'bonus', 'gambler', 'name'); // Reset classes
 
             // Add specific classes for styling
-            if (field.textContent === "Bonus") {
+            if (names.includes(content)) {
+                field.classList.add('name');
+            } else if (content === "Bonus") {
                 field.classList.add('bonus');
-            } else if (field.textContent === "Gambler!") {
+            } else if (content === "Gambler!") {
                 field.classList.add('gambler');
             }
         });
@@ -92,30 +177,78 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleGamblerAction() {
         const actions = [
             "Lose 2 points",
-            "Get 1 drink for free from [random chooses one of the 5 names]",
+            "Get 1 drink for free from [random name]", // Modified string
             "Get 2 points",
             "Death round", // Text only
-            "Dice roll" // Text only
+            "Dice roll", // Text only
+            "2 ud af 3!" // New action
         ];
-        const randomAction = actions[Math.floor(Math.random() * actions.length)];
 
-        gamblerActionText.textContent = `Gambler! Action: ${randomAction}`; // Set modal text
-        gamblerModal.style.display = 'flex'; // Show the modal
+        gamblerModal.style.display = 'flex'; // Show the modal immediately
 
-        // Implement point/drink logic for relevant actions
-        if (randomAction === "Lose 2 points" || randomAction === "Get 2 points" || randomAction.startsWith("Get 1 drink")) {
-            const randomPlayer = names[Math.floor(Math.random() * names.length)];
-            if (randomAction === "Lose 2 points") {
-                scores[randomPlayer] = Math.max(0, scores[randomPlayer] - 2); // Ensure score doesn't go below 0
-                // alert(`${randomPlayer} loses 2 points.`); // Removed alert
-            } else if (randomAction === "Get 2 points") {
-                scores[randomPlayer] += 2;
-                // alert(`${randomPlayer} gets 2 points.`); // Removed alert
-            } else if (randomAction.startsWith("Get 1 drink")) {
-                 // alert(`${randomPlayer} gets 1 drink for free!`); // Removed alert
+        let animationStartTime = Date.now();
+        const animationDuration = 6000; // 6 seconds
+        const slowDownStartTime = 3000; // Start slowing down after 3 seconds
+        let delay = 50; // Initial delay in ms
+        let currentIndex = 0;
+
+        function animateGamblerSpin() {
+            const elapsed = Date.now() - animationStartTime;
+
+            if (elapsed < animationDuration) {
+                // Display the current action in the cycle
+                let displayedActionText = actions[currentIndex];
+                 if (displayedActionText.includes("[random name]")) {
+                    const randomName = names[Math.floor(Math.random() * names.length)];
+                    displayedActionText = displayedActionText.replace("[random name]", randomName);
+                } else if (displayedActionText === "2 ud af 3!") {
+                    displayedActionText = "Roll a dice and get 2 or 3 to win!";
+                }
+                gamblerActionText.textContent = `Gambler! Action: ${displayedActionText}`;
+
+                // Move to the next action in the cycle
+                currentIndex = (currentIndex + 1) % actions.length;
+
+                // Calculate delay - gradually increase delay after slowDownStartTime
+                if (elapsed > slowDownStartTime) {
+                    const remainingTime = animationDuration - elapsed;
+                    delay = 50 + Math.max(0, (animationDuration - remainingTime) / 5);
+                } else {
+                    delay = 50; // Constant speed for the first 3 seconds
+                }
+
+                setTimeout(animateGamblerSpin, delay);
+            } else {
+                // Animation finished, determine the final action
+                const finalAction = actions[Math.floor(Math.random() * actions.length)];
+
+                let displayedActionText = finalAction;
+                 if (displayedActionText.includes("[random name]")) {
+                    const randomName = names[Math.floor(Math.random() * names.length)];
+                    displayedActionText = displayedActionText.replace("[random name]", randomName);
+                } else if (displayedActionText === "2 ud af 3!") {
+                    displayedActionText = "Roll a dice and get 2 or 3 to win!";
+                }
+                gamblerActionText.textContent = `Gambler! Action: ${displayedActionText}`;
+
+
+                // Implement point/drink logic for relevant actions based on the final action
+                if (finalAction === "Lose 2 points" || finalAction === "Get 2 points" || finalAction.startsWith("Get 1 drink")) {
+                    const randomPlayer = names[Math.floor(Math.random() * names.length)];
+                    if (finalAction === "Lose 2 points") {
+                        scores[randomPlayer] = scores[randomPlayer] - 2; // Allow negative scores
+                    } else if (finalAction === "Get 2 points") {
+                        scores[randomPlayer] += 2;
+                    } else if (finalAction.startsWith("Get 1 drink")) {
+                         // No score change for this action
+                    }
+                    updateScoreboard(); // Update scoreboard after score change
+                }
             }
-            updateScoreboard(); // Update scoreboard after score change
         }
+
+        // Start the animation
+        animateGamblerSpin();
     }
 
     // Close gambler modal when clicking outside
@@ -141,6 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         // Reset any previous highlights
+        // Reset any previous highlights and winner classes
         fields.forEach(field => {
             field.classList.remove('highlight', 'winner');
         });
@@ -161,15 +295,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const elapsed = Date.now() - animationStartTime;
 
             if (elapsed < animationDuration) {
-                 if (currentIndex > -1) {
-                    // Remove highlight from previous field (if not the very first step)
-                    nameFields[currentIndex].classList.remove('highlight');
-                }
+                 // Remove highlight from the previously highlighted field (if any)
+                 // Find the currently highlighted field among nameFields
+                 const currentlyHighlighted = nameFields.find(field => field.classList.contains('highlight'));
+                 if (currentlyHighlighted) {
+                     currentlyHighlighted.classList.remove('highlight');
+                 }
 
-                // Calculate next index
-                currentIndex = (currentIndex + 1) % totalNameFields;
+                // Select a random index from the name fields for the next highlight
+                currentIndex = Math.floor(Math.random() * totalNameFields);
 
-                // Add highlight to current field
+                // Add highlight to the randomly selected field
                 nameFields[currentIndex].classList.add('highlight');
 
                 // Calculate delay - gradually increase delay after slowDownStartTime
@@ -185,18 +321,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(animateSpin, delay);
             } else {
                 // Animation finished, determine the winner
-                let winnerIndex = currentIndex;
-                let winnerName = nameFields[winnerIndex].textContent;
+                // Ensure the final highlighted field is the actual winner
+                const finalWinnerIndex = currentIndex; // The last highlighted field is the winner
+                let winnerName = nameFields[finalWinnerIndex].textContent;
 
                 // Ensure the winner is not the same as the last winner
-                while (winnerName === lastWinnerName) {
-                    winnerIndex = Math.floor(Math.random() * totalNameFields);
-                    winnerName = nameFields[winnerIndex].textContent;
+                // If it is, pick a new random winner from the name fields
+                if (winnerName === lastWinnerName) {
+                     const availableWinners = nameFields.filter(field => field.textContent !== lastWinnerName);
+                     if (availableWinners.length > 0) {
+                         const newWinnerField = availableWinners[Math.floor(Math.random() * availableWinners.length)];
+                         winnerName = newWinnerField.textContent;
+                         // Find the index of the new winner in the original nameFields array
+                         currentIndex = nameFields.indexOf(newWinnerField);
+                     } else {
+                         // If all name fields are the last winner (unlikely with 20 name fields),
+                         // just keep the current winner.
+                         console.warn("All name fields are the same as the last winner. Keeping current winner.");
+                     }
                 }
 
-                // Highlight the winner
-                nameFields[winnerIndex].classList.add('winner');
-                nameFields[winnerIndex].classList.remove('highlight'); // Ensure highlight is removed
+
+                // Ensure only the final winner is highlighted and has the 'winner' class
+                fields.forEach(field => {
+                    field.classList.remove('highlight', 'winner');
+                });
+                nameFields[currentIndex].classList.add('highlight', 'winner');
+
 
                 // Update the last winner
                 lastWinnerName = winnerName;
@@ -234,13 +385,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const points = parseInt(button.dataset.points);
             if (selectedPlayer && !isNaN(points)) {
                 scores[selectedPlayer] += points;
-                 // Ensure score doesn't go below 0
-                if (scores[selectedPlayer] < 0) {
-                    scores[selectedPlayer] = 0;
-                }
-                updateScoreboard(); // Update scoreboard after adjustment
-            }
-        });
+                 updateScoreboard(); // Update scoreboard after adjustment
+             }
+         });
     });
 
     // Add click listeners to fields for Gambler! action
@@ -250,6 +397,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 handleGamblerAction();
             }
         });
+    });
+
+    // Rules button click handler
+    const rulesButton = document.getElementById('rules-button');
+    const rulesContent = document.getElementById('rules-content');
+
+    rulesButton.addEventListener('click', () => {
+        if (rulesContent.style.display === 'block') {
+            rulesContent.style.display = 'none';
+        } else {
+            rulesContent.style.display = 'block';
+        }
     });
 
 });
